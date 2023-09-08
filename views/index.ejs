@@ -1,0 +1,43 @@
+<%- include("partials/header.ejs") %>
+    <div class="conhead">
+        <h1  class="date-heading"><%= formattedDate %></h1>
+    </div>
+    <div class="list-container" id="todolist">
+            <ul class="ul2">
+                <% for (i = 0; i < newlistitem.length; i++) { %>
+                     <li class="lists">
+                        <input type="checkbox" class="taskcheckbox" id="task<%= i %>" data-index="<%= i %>" <%= newlistitem[i].completed ? 'checked' : '' %>>
+                        <label for="task<%= i %>"><%= newlistitem[i].text %></label>
+                    </li>
+                <% } %>
+                <form action="/" method="post">
+                    <input type="text" name="newitem">   
+                    <button type="submit" ><img src="/images/icons8-add-100.png" alt=""></button>
+                </form>
+            </ul>
+    </div>
+<%- include("partials/footer.ejs") %>
+<script>
+    const checkboxes = document.querySelectorAll(".taskcheckbox");
+
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function (event) {
+            event.preventDefault(); 
+
+            const index = this.getAttribute("data-index");
+            fetch("/toggle", {
+                method: "POST",
+                body: JSON.stringify({ index }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }).then(() => {
+                if (this.checked) {
+                    this.nextElementSibling.style.textDecoration = "line-through";
+                } else {
+                    this.nextElementSibling.style.textDecoration = "none";
+                }
+            });
+        });
+    });
+</script>
